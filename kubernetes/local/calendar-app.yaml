@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: calendar
+spec:
+  selector:
+    app: calendar
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar
+  labels:
+    tags.datadoghq.com/env: "prod"
+    tags.datadoghq.com/service: "calendar"
+    tags.datadoghq.com/version: "0.1.0"
+spec:
+  selector:
+    matchLabels:
+      app: calendar
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: calendar
+        tags.datadoghq.com/env: "prod" # Unified service tag - Pod Env tag
+        tags.datadoghq.com/service: "calendar" # Unified service tag - Pod Service tag
+        tags.datadoghq.com/version: "0.1.0" # Unified service tag - Pod Version tag
+        admission.datadoghq.com/enabled: "true" # Enable Admission Controller to mutate new pods part of this deployment
+      annotations:
+        ad.datadoghq.com/calendar-app.logs: '[{"source":"python", "service":"calendar", "tags":["foo:bar"]}]'
+        admission.datadoghq.com/python-lib.version: "2.20.1"
+    spec:
+      containers:
+      - name: calendar-app
+        image: calendar-app:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9090
+        env:
+          - name: DD_AGENT_HOST
+            value: datadog
