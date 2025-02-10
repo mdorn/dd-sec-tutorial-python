@@ -60,7 +60,9 @@ class SQLiteConnection:
         cursor = self.connection.cursor()
         if id:
             try:
-                cursor.execute(f"SELECT id, description FROM notes WHERE id = {id}" )
+                # -- BEGIN SQLi vuln
+                cursor.execute(f"SELECT id, description FROM notes WHERE id = {id}")
+                # -- END SQLi vuln
                 # query = "SELECT id, description FROM notes WHERE id = ?"
                 # cursor.execute(query, [id])
                 note = cursor.fetchone()
