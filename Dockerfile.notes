@@ -5,6 +5,11 @@
 # Copyright 2022 Datadog, Inc.
 FROM python:3.9
 
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
+
 ENV DD_SERVICE="notes"
 ENV DD_ENV="dev"
 ENV DD_VERSION="0.1.0"
@@ -21,5 +26,5 @@ COPY notes_app /home/notes_app
 RUN pip install -r requirements.txt
 
 # Run the application with Datadog 
-# CMD ["ddtrace-run", "python", "-m", "notes_app.app"]
-CMD ["python", "-m", "notes_app.app"]
+CMD ["ddtrace-run", "python", "-m", "notes_app.app"]
+# CMD ["python", "-m", "notes_app.app"]
