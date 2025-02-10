@@ -60,7 +60,7 @@ class SQLiteConnection:
         cursor = self.connection.cursor()
         if id:
             try:
-                cursor.execute(f"SELECT id, description FROM notes WHERE id = {id}")
+                cursor.execute(f"SELECT id, description FROM notes WHERE id = {id}" )
                 # query = "SELECT id, description FROM notes WHERE id = ?"
                 # cursor.execute(query, [id])
                 note = cursor.fetchone()
