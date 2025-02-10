@@ -49,5 +49,11 @@ spec:
             value: postgres
           - name: DD_AGENT_HOST  # TODO: is this needed?
             value: datadog
+          - name: DD_LOGS_INJECTION
+            value: "true"
+          - name: DD_APPSEC_ENABLED
+            value: "true"
           - name: DD_IAST_ENABLED
+            value: "true"
+          - name: DD_APPSEC_SCA_ENABLED
             value: "true"
