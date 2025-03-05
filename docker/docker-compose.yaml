@@ -1,0 +1,89 @@
+# Unless explicitly stated otherwise all files in this repository are dual-licensed
+# under the Apache 2.0 or BSD3 Licenses.
+#
+# This product includes software developed at Datadog (https://www.datadoghq.com/)
+# Copyright 2022 Datadog, Inc.
+services:
+  datadog:
+    container_name: dd-agent
+    image: "gcr.io/datadoghq/agent:latest"
+    pid: host
+    security_opt:
+      - apparmor:unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - SYS_PTRACE
+      - NET_ADMIN
+      - NET_BROADCAST
+      - NET_RAW
+      - IPC_LOCK
+      - CHOWN
+    environment:
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=datadoghq.com
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_ENABLED=true
+      - DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED=true
+      - DD_REMOTE_CONFIGURATION_ENABLED=true
+      # Sec
+      - DD_COMPLIANCE_CONFIG_ENABLED=true
+      - DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED=true
+      - DD_IAST_ENABLED=true
+      - DD_APPSEC_ENABLED=true
+      # Workload Sec
+      - DD_RUNTIME_SECURITY_CONFIG_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_NETWORK_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_REMOTE_CONFIGURATION_ENABLED=true
+      - DD_RUNTIME_SECURITY_CONFIG_SECURITY_PROFILE_AUTO_SUPPRESSION_ENABLED=false
+      - DD_RUNTIME_SECURITY_CONFIG_ACTIVITY_DUMP_AUTO_SUPPRESSION_ENABLED=false
+      - HOST_ROOT=/host/root
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - /:/host/root:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /etc/os-release:/etc/os-release
+
+  calendar_app:
+    container_name: calendar
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "calendar"}]'
+    restart: always
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.calendar
+    ports:
+      - "9090:9090"
+    environment:
+      - DD_AGENT_HOST=datadog # Should reference the service name of the Datadog agent container in this docker-compose
+
+  notes_app:
+    container_name: notes
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python", "service": "notes_app"}]'    
+    restart: always
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.notes
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=test_postgres       # References the Postgres container
+      - CALENDAR_HOST=calendar      # References the calendar container
+      - DD_AGENT_HOST=datadog       # Should reference the service name of the Datadog agent container in this docker-compose
+
+  db:
+    container_name: test_postgres
+    image: "postgres"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+      POSTGRES_HOST_AUTH_METHOD: trust 

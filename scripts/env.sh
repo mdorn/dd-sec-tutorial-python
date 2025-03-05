@@ -1,1 +1,0 @@
-export DD_API_KEY=<DD_API_KEY>
