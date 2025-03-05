@@ -62,6 +62,9 @@ services:
       - "9090:9090"
     environment:
       - DD_AGENT_HOST=datadog # Should reference the service name of the Datadog agent container in this docker-compose
+      - DD_LOGS_INJECTION=true
+      - DD_IAST_ENABLED=true
+      - DD_APPSEC_SCA_ENABLED=true
 
   notes_app:
     container_name: notes
@@ -79,6 +82,9 @@ services:
       - DB_HOST=test_postgres       # References the Postgres container
       - CALENDAR_HOST=calendar      # References the calendar container
       - DD_AGENT_HOST=datadog       # Should reference the service name of the Datadog agent container in this docker-compose
+      - DD_LOGS_INJECTION=true
+      - DD_IAST_ENABLED=true
+      - DD_APPSEC_SCA_ENABLED=true
 
   db:
     container_name: test_postgres
