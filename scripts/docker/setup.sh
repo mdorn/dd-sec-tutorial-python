@@ -9,4 +9,4 @@ docker build \
  --build-arg DD_GIT_REPOSITORY_URL=https://github.com/mdorn/dd-sec-tutorial-python.git \
  --build-arg DD_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
  -f docker/Dockerfile.calendar .
-docker-compose -f docker/docker-compose.yaml --env-file .env up
+docker-compose -f docker/docker-compose.yaml --env-file .env up -d
