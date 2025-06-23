@@ -4,7 +4,7 @@
 # This product includes software developed at Datadog (https://www.datadoghq.com/)
 # Copyright 2022 Datadog, Inc.
 from notes_app.notes_logic import NotesLogic
-from flask import Flask, request
+from flask import Flask, request, abort
 
 app = Flask(__name__)
 
@@ -40,6 +40,16 @@ def update_note():
 def delete_note():
     id = request.args.get('id')
     return note_handler.delete_note(id)
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    args = request.get_json()
+    username = args.get('username')
+    password = args.get('password')
+    if username == 'user1' and password == 'P@ssw0rd!':
+        return 'Welcome {}!'.format(username)
+    abort(401)
 
 
 if __name__ == '__main__':
