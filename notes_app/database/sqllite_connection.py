@@ -61,12 +61,13 @@ class SQLiteConnection:
         if id:
             try:
                 # -- BEGIN SQLi vuln
-                cursor.execute(f"SELECT id,description FROM notes WHERE id = {id}")
-                # cursor.execute(f"SELECT id, description FROM notes WHERE id = {id}")
+                query = f"SELECT id,description FROM notes WHERE id = {id}"
+                cursor.execute(query)
                 # -- END SQLi vuln
                 # query = "SELECT id, description FROM notes WHERE id = ?"
                 # cursor.execute(query, [id])
-                note = cursor.fetchone()
+                # -- ^^^ this query not vulnerable to SQLi
+                note = cursor.fetchall()
                 cursor.close()
                 return note
             except:

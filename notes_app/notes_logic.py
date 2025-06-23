@@ -27,7 +27,9 @@ class NotesLogic:
             note = self.db.get_notes(id)
             if not note:
                 return "Note does not exist"
-            return str(Note(id=note[0], description=note[1]))
+            # return str(Note(id=note[0], description=note[1]))
+            # allow SQLi vuln to be truly exploitable
+            return str(note)
         else:
             notes = self.db.get_notes()
             self.nh.long_running_process()
@@ -42,7 +44,6 @@ class NotesLogic:
                     note_date = requests.get(f"http://{CALENDAR_HOST}:9090/calendar")
                     note_date = note_date.text
                     desc = desc + " with date " + note_date
-                    print(desc)
                 except Exception as e:
                     print(e)
                     raise IOError("Cannot reach calendar service.")

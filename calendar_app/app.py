@@ -22,7 +22,6 @@ def get_date():
     day_offset = randint(0, 365)
     start_date = datetime(2022, 1, 1)
     output = start_date + timedelta(days=day_offset)
-    print(output)
     return output.strftime("%m/%d/%Y")
 
 
