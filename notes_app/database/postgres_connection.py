@@ -69,9 +69,13 @@ class PostgresConnection:
         cursor = self.connection.cursor()
         if id:
             try:
-                query = "SELECT id, description FROM notes WHERE id = %s"
-                cursor.execute(query, [id])
-                note = cursor.fetchone()
+                # -- BEGIN SQLi vuln
+                query = f"SELECT id,description FROM notes WHERE id = {id}"
+                cursor.execute(query)
+                # -- END SQLi vuln
+                # query = "SELECT id, description FROM notes WHERE id = %s"
+                # cursor.execute(query, [id])
+                note = cursor.fetchall()
                 cursor.close()
                 return note
             except:
